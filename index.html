@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>beIN Sports 1 - Plyr.js Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Plyr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" />
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+      font-family: sans-serif;
+    }
+    .plyr__video-embed {
+      width: 90%;
+      max-width: 900px;
+      border: 2px solid #444;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>beIN Sports 1 (Plyr.js)</h1>
+  <video id="player" controls autoplay></video>
+
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <!-- Plyr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
+
+  <script>
+    const video = document.getElementById('player');
+    const source = 'proxy.php';
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(source);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        video.play();
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = source;
+      video.addEventListener('loadedmetadata', function () {
+        video.play();
+      });
+    }
+
+    const player = new Plyr(video, {
+      ratio: '16:9',
+      fullscreen: { enabled: true, fallback: true },
+      controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
+    });
+  </script>
+
+</body>
+</html>
