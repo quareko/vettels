@@ -1,67 +1,76 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>beIN Sports 1 - Plyr.js Player</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <!-- Plyr CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" />
-
-  <style>
-    body {
-      margin: 0;
-      background-color: #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      color: white;
-      font-family: sans-serif;
-    }
-    .plyr__video-embed {
-      width: 90%;
-      max-width: 900px;
-      border: 2px solid #444;
-      border-radius: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>IPTV Yayıncı</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" />
+    <style>
+        body {
+            background: #111;
+            color: #fff;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #player {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px 0;
+        }
+        #channels {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+        }
+        .channel {
+            background: #222;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .channel:hover {
+            background: #444;
+        }
+    </style>
 </head>
 <body>
+    <h1>IPTV Yayıncı</h1>
+    <video id="player" controls autoplay></video>
 
-  <h1>beIN Sports 1 (Plyr.js)</h1>
-  <video id="player" controls autoplay></video>
+    <div id="channels">
+        <div class="channel" onclick="playStream('https://tryingvettelchannel.ct.ws/proxy.php?url=https%3A%2F%2Ffener2.demoscript.buzz%2Fhls%2Fbein-sports-1.m3u8')">beIN Sports 1</div>
+        <div class="channel" onclick="playStream('https://tryingvettelchannel.ct.ws/proxy.php?url=https%3A%2F%2Ffener2.demoscript.buzz%2Fhls%2Fbein-sports-2.m3u8')">beIN Sports 2</div>
+        <!-- Diğer kanallar buraya eklenecek -->
+    </div>
 
-  <!-- HLS.js -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <!-- Plyr JS -->
-  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
+    <script>
+        const video = document.getElementById('player');
+        const player = new Plyr(video);
 
-  <script>
-    const video = document.getElementById('player');
-    const source = 'proxy.php';
-
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(source);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        video.play();
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = source;
-      video.addEventListener('loadedmetadata', function () {
-        video.play();
-      });
-    }
-
-    const player = new Plyr(video, {
-      ratio: '16:9',
-      fullscreen: { enabled: true, fallback: true },
-      controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
-    });
-  </script>
-
+        function playStream(url) {
+            if (Hls.isSupported()) {
+                if (window.hls) window.hls.destroy();
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+                window.hls = hls;
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.play();
+            } else {
+                alert("Tarayıcınız HLS desteklemiyor.");
+            }
+        }
+    </script>
 </body>
 </html>
